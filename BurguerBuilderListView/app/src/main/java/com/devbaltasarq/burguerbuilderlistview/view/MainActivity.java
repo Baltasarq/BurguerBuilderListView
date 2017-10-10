@@ -1,11 +1,13 @@
 package com.devbaltasarq.burguerbuilderlistview.view;
 
 import android.content.DialogInterface;
-import android.support.constraint.solver.ArrayLinkedVariables;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -55,8 +57,65 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Connect context menu
+        final ListView lvIngredients = (ListView) this.findViewById( R.id.lvIngredients );
+        this.registerForContextMenu( lvIngredients );
+
         this.showFixedIngredients();
         this.updateTotals();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        super.onCreateOptionsMenu( menu );
+
+        this.getMenuInflater().inflate( R.menu.main_menu, menu );
+        return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo cmi)
+    {
+        super.onCreateContextMenu( menu, v, cmi );
+
+        if ( v.getId() == R.id.lvIngredients ) {
+            this.getMenuInflater().inflate( R.menu.ingredients_menu, menu );
+        }
+
+        return;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        boolean toret = false;
+
+        if ( item.getItemId() == R.id.ingredients_menu_remove ) {
+            toret = true;
+            final int pos = ( (AdapterView.AdapterContextMenuInfo) item.getMenuInfo() ).position;
+            this.removeSelected( pos );
+        }
+
+        return toret;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem)
+    {
+        boolean toret = false;
+
+        if ( menuItem.getItemId() == R.id.mainMenu_add ) {
+            toret = true;
+            this.showIngredientsDialog();
+        }
+        else
+        if ( menuItem.getItemId() == R.id.mainMenu_exit ) {
+            toret = true;
+            System.exit( 0 );
+        }
+
+        return toret;
     }
 
     private void showFixedIngredients()
@@ -100,17 +159,21 @@ public class MainActivity extends AppCompatActivity {
                         android.R.layout.simple_list_item_1,
                         ingredients ) );
 
-        lvIngredients.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        lvIngredients.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final int listPos = MainActivity.this.cfgBurguer.getGlobalPosOfSelected( i );
-
-                MainActivity.this.cfgBurguer.getSelected()[ listPos ] = false;
-                MainActivity.this.showIngredients();
-                MainActivity.this.updateTotals();
-                return true;
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MainActivity.this.removeSelected(i);
             }
         });
+    }
+
+    private void removeSelected(int i)
+    {
+        final int listPos = MainActivity.this.cfgBurguer.getGlobalPosOfSelected( i );
+
+        MainActivity.this.cfgBurguer.getSelected()[ listPos ] = false;
+        MainActivity.this.showIngredients();
+        MainActivity.this.updateTotals();
     }
 
     private void updateTotals()

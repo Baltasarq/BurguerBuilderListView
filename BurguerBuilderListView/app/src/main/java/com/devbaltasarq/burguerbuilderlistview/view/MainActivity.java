@@ -64,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
         ListView lvFixedIngredients = (ListView) this.findViewById( R.id.lvFixedIngredients );
 
         String[] fixedIngredients = new String[] {
-                String.format( "%4.2f€ ", BurguerConfigurator.FIXED_COSTS[ 0 ] ) +
-                        BurguerConfigurator.FIXED_INGREDIENTS[ 0 ],
-                String.format( "%4.2f€ ", BurguerConfigurator.FIXED_COSTS[ 1 ] ) +
-                        BurguerConfigurator.FIXED_INGREDIENTS[ 1 ]
+                String.format( "%4.2f€ %s", BurguerConfigurator.FIXED_COSTS[ 0 ],
+                        BurguerConfigurator.FIXED_INGREDIENTS[ 0 ] ),
+                String.format( "%4.2f€ %s", BurguerConfigurator.FIXED_COSTS[ 1 ],
+                        BurguerConfigurator.FIXED_INGREDIENTS[ 1 ] )
         };
 
         lvFixedIngredients.setAdapter(
@@ -89,13 +89,11 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < NUM_ITEMS; ++i) {
             if ( selections[ i ] ) {
                 ingredients.add(
-                        String.format( "%4.2f€", BurguerConfigurator.COSTS[ i ] )
-                        + " " + BurguerConfigurator.INGREDIENTS[ i ] );
+                        String.format( "%4.2f€ %s", BurguerConfigurator.COSTS[ i ],
+                                        BurguerConfigurator.INGREDIENTS[ i ] ) );
             }
         }
 
-        lvIngredients.setLongClickable( true );
-        lvIngredients.setClickable( false );
         lvIngredients.setAdapter(
                 new ArrayAdapter<String>(
                         this,

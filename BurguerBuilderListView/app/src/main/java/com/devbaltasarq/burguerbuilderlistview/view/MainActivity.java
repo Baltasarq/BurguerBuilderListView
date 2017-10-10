@@ -63,22 +63,30 @@ public class MainActivity extends AppCompatActivity {
     {
         ListView lvFixedIngredients = (ListView) this.findViewById( R.id.lvFixedIngredients );
 
+        String[] fixedIngredients = new String[] {
+                String.format( "%4.2f€ ", BurguerConfigurator.FIXED_COSTS[ 0 ] ) +
+                        BurguerConfigurator.FIXED_INGREDIENTS[ 0 ],
+                String.format( "%4.2f€ ", BurguerConfigurator.FIXED_COSTS[ 1 ] ) +
+                        BurguerConfigurator.FIXED_INGREDIENTS[ 1 ]
+        };
+
         lvFixedIngredients.setAdapter(
                 new ArrayAdapter<String>(
                         this,
                         android.R.layout.simple_list_item_1,
-                        new String[] { "1.00€ Pan", "2.00€ Carne de vacuno" } ) );
+                        fixedIngredients ) );
 
     }
 
     private void showIngredients()
     {
+        final int NUM_ITEMS = this.cfgBurguer.getSelected().length;
         final boolean[] selections = this.cfgBurguer.getSelected();
         final ListView lvIngredients = (ListView) this.findViewById( R.id.lvIngredients );
 
         // Create list
         ArrayList<String> ingredients = new ArrayList<>();
-        for(int i = 0; i < this.cfgBurguer.getSelected().length; ++i) {
+        for(int i = 0; i < NUM_ITEMS; ++i) {
             if ( selections[ i ] ) {
                 ingredients.add(
                         String.format( "%4.2f€", BurguerConfigurator.COSTS[ i ] )
@@ -91,13 +99,14 @@ public class MainActivity extends AppCompatActivity {
         lvIngredients.setAdapter(
                 new ArrayAdapter<String>(
                         this,
-                        android.R.layout.simple_selectable_list_item,
-                        ingredients.toArray( new String[ ingredients.size() ] ) ) );
+                        android.R.layout.simple_list_item_1,
+                        ingredients ) );
+
         lvIngredients.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final int listPos = MainActivity.this.cfgBurguer.getGlobalPosOfSelected( i );
-System.out.println( String.format( "Selected %d, global %d: %s", i, listPos, BurguerConfigurator.INGREDIENTS[ listPos ] ) );
+
                 MainActivity.this.cfgBurguer.getSelected()[ listPos ] = false;
                 MainActivity.this.showIngredients();
                 MainActivity.this.updateTotals();
@@ -125,7 +134,6 @@ System.out.println( String.format( "Selected %d, global %d: %s", i, listPos, Bur
         // Update
         lblTotal.setText(
                 String.format( "%4.2f", MainActivity.this.cfgBurguer.calculateCost() ) );
-        this.showIngredients();
         Log.i( "MainActivity.updTotals", "End updating." );
     }
 
@@ -150,6 +158,7 @@ System.out.println( String.format( "Selected %d, global %d: %s", i, listPos, Bur
         dlg.setPositiveButton( "Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                MainActivity.this.showIngredients();
                 MainActivity.this.updateTotals();
             }
         });
@@ -158,7 +167,8 @@ System.out.println( String.format( "Selected %d, global %d: %s", i, listPos, Bur
 
     private void showPricesDialog()
     {
-        final String[] ingredientsWithPrices = new String[ BurguerConfigurator.getNumIngredients() ];
+        final int NUM_INGREDIENTS = BurguerConfigurator.INGREDIENTS.length;
+        final String[] ingredientsWithPrices = new String[ NUM_INGREDIENTS ];
         final TextView lblData = new TextView( this );
         AlertDialog.Builder dlg = new AlertDialog.Builder( this );
         dlg.setTitle( this.getResources().getString( R.string.lblPrices) );

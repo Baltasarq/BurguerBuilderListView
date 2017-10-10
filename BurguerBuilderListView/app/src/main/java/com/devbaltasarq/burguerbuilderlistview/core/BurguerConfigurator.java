@@ -41,10 +41,10 @@ public class BurguerConfigurator {
         for(int i = 0; i < this.selected.length; ++i) {
             if ( this.selected[ i ] ) {
                 --selectedPos;
-                 if ( selectedPos < 0 ) {
-                     toret = i;
-                     break;
-                 }
+                if ( selectedPos < 0 ) {
+                    toret = i;
+                    break;
+                }
             }
         }
 
@@ -89,13 +89,7 @@ public class BurguerConfigurator {
         return this.toString().replace( DELIMITER, newDelimiter );
     }
 
-    /** Returns the number of ingredients available. */
-    public static int getNumIngredients()
-    {
-        return INGREDIENTS.length;
-    }
-
-    /** Represents all available ingredients */
+    /** Represents all available (selectable) ingredients */
     public static String[] INGREDIENTS = new String[] {
             "Lechuga",
             "Tomate",
@@ -104,13 +98,25 @@ public class BurguerConfigurator {
             "Cebolla"
     };
 
-    /** Parallel array to ingredients, representing all costs */
+    /** Parallel array to ingredients, representing their costs */
     public static double[] COSTS = new double[] {
             0.1,
             0.5,
             1,
             0.75,
             0.1
+    };
+
+    /** Represents all fixed, mandatory ingredients */
+    public static String[] FIXED_INGREDIENTS = new String[] {
+            "Pan",
+            "Carne"
+    };
+
+    /** Parallel array to fixed ingredients, representing their costs */
+    public static double[] FIXED_COSTS = new double[] {
+            1,
+            2
     };
 
     private boolean[] selected;
